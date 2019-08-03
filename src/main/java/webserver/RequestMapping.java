@@ -1,15 +1,14 @@
 package webserver;
 
-import controller.Controller;
-import controller.CreateUserController;
-import controller.ListUserController;
-import controller.LoginController;
+import controller.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class RequestMapping {
     private static Map<String, Controller> controllers = new HashMap<String, Controller>();
+    private static Controller forwardController = new ForwardController();
+    private static Controller staticController = new StaticController();
 
     static {
         controllers.put("/user/create", new CreateUserController());
@@ -18,6 +17,15 @@ public class RequestMapping {
     }
 
     public static Controller getController(String requestUrl) {
-        return controllers.get(requestUrl);
+        Controller controller = controllers.get(requestUrl);
+        if (controller != null) {
+            return controller;
+        }
+
+        if (requestUrl.endsWith(".html")) {
+            return forwardController;
+        }
+
+        return staticController;
     }
 }

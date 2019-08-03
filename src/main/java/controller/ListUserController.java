@@ -18,6 +18,8 @@ public class ListUserController extends AbstractController {
 
         Collection<User> users = DataBase.findAll();
         request.addAttribute("users", users);
+
+        response.forward("/user/list");
     }
 
     private static boolean isLogined(HttpSession session) {

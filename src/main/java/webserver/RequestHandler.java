@@ -34,14 +34,10 @@ public class RequestHandler implements Runnable {
                 response.addHeader("Set-Cookie", HttpSessions.SESSION_ID_NAME + "=" + UUID.randomUUID());
             }
 
-            Controller controller = RequestMapping.getController(request.getPath());
-            if (controller == null) {
-                String path = getDefaultPath(request.getPath());
-                response.forward(path);
-            } else {
-                controller.service(request, response);
-            }
-        } catch (IOException e) {
+            String path = getDefaultPath(request.getPath());
+            Controller controller = RequestMapping.getController(path);
+            controller.service(request, response);
+        } catch (Exception e) {
             logger.error(e.getMessage());
         }
     }

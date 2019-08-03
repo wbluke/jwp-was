@@ -1,6 +1,5 @@
 package http;
 
-import http.view.StaticViewResolver;
 import http.view.TemplateViewResolver;
 import http.view.View;
 import http.view.ViewResolver;
@@ -10,13 +9,12 @@ import org.slf4j.LoggerFactory;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class HttpResponse {
     private static final Logger log = LoggerFactory.getLogger(HttpResponse.class);
-
-    private static List<ViewResolver> viewResolvers =
-            Arrays.asList(new StaticViewResolver(), new TemplateViewResolver());
 
     private HttpRequest request;
 
@@ -33,29 +31,14 @@ public class HttpResponse {
         headers.put(key, value);
     }
 
-    private ViewResolver getViewResolver(String path) {
-        return viewResolvers.stream()
-                .filter(viewResolver -> viewResolver.isSupports(path))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException(path + "을 처리할 ViewResolver를 찾을 수 없다."));
-    }
-
     public void forward(String path) {
         try {
-            ViewResolver viewResolver = getViewResolver(path);
+            ViewResolver viewResolver = new TemplateViewResolver();
             View view = viewResolver.resolveViewName(path);
             view.render(request, this);
         } catch (Exception e) {
             log.error(e.getMessage());
         }
-    }
-
-    public void forwardBody(String body) {
-        byte[] contents = body.getBytes();
-        headers.put("Content-Type", "text/html;charset=utf-8");
-        headers.put("Content-Length", contents.length + "");
-        response200Header(contents.length);
-        responseBody(contents);
     }
 
     public void response200Header(int lengthOfBodyContent) {

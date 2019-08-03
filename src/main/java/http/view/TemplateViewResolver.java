@@ -21,24 +21,14 @@ public class TemplateViewResolver implements ViewResolver {
     }
 
     @Override
-    public boolean isSupports(String path) {
-        return path.endsWith(".html");
-
-    }
-
-    @Override
     public View resolveViewName(String viewName) {
         logger.debug("viewName : {}", viewName);
 
         try {
-            return new TemplateView(handlebars.compile(removeSuffix(viewName)));
+            return new TemplateView(handlebars.compile(viewName));
         } catch (IOException e) {
             logger.error("Load Template fail: {}", e.getMessage());
             throw new IllegalArgumentException();
         }
-    }
-
-    private String removeSuffix(String viewName) {
-        return viewName.replace(".html", "");
     }
 }

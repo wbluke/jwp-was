@@ -36,6 +36,7 @@ public class RequestHandler implements Runnable {
 
             String path = getDefaultPath(request.getPath());
             Controller controller = RequestMapping.getController(path);
+            logger.debug("Controller : {}", controller);
             controller.service(request, response);
         } catch (Exception e) {
             logger.error(e.getMessage());

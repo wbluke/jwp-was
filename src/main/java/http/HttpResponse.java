@@ -82,4 +82,14 @@ public class HttpResponse {
             log.error(e.getMessage());
         }
     }
+
+    public void response404() {
+        try {
+            dos.writeBytes("HTTP/1.1 404 Not Found \r\n");
+            processHeaders();
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
 }

@@ -12,74 +12,74 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HttpRequest {
-	private static final Logger log = LoggerFactory.getLogger(HttpRequest.class);
+    private static final Logger log = LoggerFactory.getLogger(HttpRequest.class);
 
-	private RequestLine requestLine;
+    private RequestLine requestLine;
 
-	private HttpHeaders headers;
-	
-	private RequestParams requestParams = new RequestParams();
+    private HttpHeaders headers;
 
-	private Map<String, Object> attributes = new HashMap<>();
+    private RequestParams requestParams = new RequestParams();
 
-	public HttpRequest(InputStream is) {
-		try {
-			BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-			requestLine = new RequestLine(createRequestLine(br));
-			requestParams.addQueryString(requestLine.getQueryString());
-			headers = processHeaders(br);
-			requestParams.addBody(IOUtils.readData(br, headers.getContentLength()));
-		} catch (IOException e) {
-			log.error(e.getMessage());
-		}
-	}
+    private Map<String, Object> attributes = new HashMap<>();
 
-	private String createRequestLine(BufferedReader br) throws IOException {
-		String line = br.readLine();
-		if (line == null) {
-			throw new IllegalStateException();
-		}
-		return line;
-	}
+    public HttpRequest(InputStream is) {
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+            requestLine = new RequestLine(createRequestLine(br));
+            requestParams.addQueryString(requestLine.getQueryString());
+            headers = processHeaders(br);
+            requestParams.addBody(IOUtils.readData(br, headers.getContentLength()));
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
 
-	private HttpHeaders processHeaders(BufferedReader br) throws IOException {
-		HttpHeaders headers = new HttpHeaders();
-		String line;
-		while (!(line = br.readLine()).equals("")) {
-			headers.add(line);
-		}
-		return headers;
-	}
+    private String createRequestLine(BufferedReader br) throws IOException {
+        String line = br.readLine();
+        if (line == null) {
+            throw new IllegalStateException();
+        }
+        return line;
+    }
 
-	public HttpMethod getMethod() {
-		return requestLine.getMethod();
-	}
+    private HttpHeaders processHeaders(BufferedReader br) throws IOException {
+        HttpHeaders headers = new HttpHeaders();
+        String line;
+        while (!(line = br.readLine()).equals("")) {
+            headers.add(line);
+        }
+        return headers;
+    }
 
-	public String getPath() {
-		return requestLine.getPath();
-	}
+    public HttpMethod getMethod() {
+        return requestLine.getMethod();
+    }
 
-	public String getHeader(String name) {
-		return headers.getHeader(name);
-	}
+    public String getPath() {
+        return requestLine.getPath();
+    }
 
-	public String getParameter(String name) {
-		return requestParams.getParameter(name);
-	}
-	
-	public HttpCookie getCookies() {
-		return headers.getCookies();
-	}
-	
-	public HttpSession getSession() {
-		return headers.getSession();
-	}
+    public String getHeader(String name) {
+        return headers.getHeader(name);
+    }
 
-	public void addAttribute(String name, Object value) {
-		attributes.put(name, value);
-	}
+    public String getParameter(String name) {
+        return requestParams.getParameter(name);
+    }
 
-	public Map<String, Object> getAttributes() {
-		return attributes;
-	}
+    public HttpCookie getCookies() {
+        return headers.getCookies();
+    }
+
+    public HttpSession getSession() {
+        return headers.getSession();
+    }
+
+    public void addAttribute(String name, Object value) {
+        attributes.put(name, value);
+    }
+
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
 }
